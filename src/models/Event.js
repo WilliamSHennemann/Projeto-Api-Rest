@@ -15,7 +15,7 @@ const eventSchema = new mongoose.Schema({
     maxlength: [1000, 'Descrição deve ter no máximo 1000 caracteres']
   },
   date: {
-    type: number,
+    type: Date,
     required: [true, 'Data do evento é obrigatória'],
     validate: {
       validator: function(value) {
