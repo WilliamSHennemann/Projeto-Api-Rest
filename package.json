@@ -2,9 +2,9 @@
   "name": "event-management-api",
   "version": "1.0.0",
   "description": "API simples de gestão de eventos",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node app.js"
   },
   "dependencies": {
     "dotenv": "^17.4.2",
