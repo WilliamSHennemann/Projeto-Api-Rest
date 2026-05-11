@@ -1,6 +1,6 @@
 const Event = require('../models/Event');
 
-// @desc    Criar evento
+
 const createEvent = async (req, res) => {
   try {
     const event = await Event.create(req.body);
@@ -14,7 +14,6 @@ const createEvent = async (req, res) => {
   }
 };
 
-// @desc    Listar eventos com filtros e paginação
 const getEvents = async (req, res) => {
   try {
     let query = {};
@@ -52,7 +51,7 @@ const getEvents = async (req, res) => {
   }
 };
 
-// @desc    Obter evento por ID
+
 const getEventById = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
@@ -65,7 +64,7 @@ const getEventById = async (req, res) => {
   }
 };
 
-// @desc    Atualizar evento
+
 const updateEvent = async (req, res) => {
   try {
     let event = await Event.findById(req.params.id);
@@ -83,7 +82,6 @@ const updateEvent = async (req, res) => {
   }
 };
 
-// @desc    Deletar evento
 const deleteEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
