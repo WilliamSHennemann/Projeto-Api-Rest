@@ -1,6 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const connectDB = require('./src/config/database');
+const connectDB = require('./src/config/db');
 const eventRoutes = require('./src/routes/eventRoutes');
 
 // Carregar variáveis de ambiente

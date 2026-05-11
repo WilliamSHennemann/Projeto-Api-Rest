@@ -15,7 +15,7 @@ const eventSchema = new mongoose.Schema({
     maxlength: [1000, 'Descrição deve ter no máximo 1000 caracteres']
   },
   date: {
-    type: Date,
+    type: number,
     required: [true, 'Data do evento é obrigatória'],
     validate: {
       validator: function(value) {
@@ -29,11 +29,6 @@ const eventSchema = new mongoose.Schema({
     required: [true, 'Localização é obrigatória'],
     trim: true
   },
-  category: {
-    type: String,
-    required: [true, 'Categoria é obrigatória'],
-    enum: ['Conferência', 'Workshop', 'Meetup', 'Webinar', 'Palestra', 'Outro']
-  },
   capacity: {
     type: Number,
     required: [true, 'Capacidade é obrigatória'],
@@ -44,15 +39,6 @@ const eventSchema = new mongoose.Schema({
     type: Number,
     default: 0,
     min: [0, 'Preço não pode ser negativo']
-  },
-  tags: [{
-    type: String,
-    trim: true
-  }],
-  status: {
-    type: String,
-    enum: ['active', 'cancelled', 'completed'],
-    default: 'active'
   },
   createdAt: {
     type: Date,
