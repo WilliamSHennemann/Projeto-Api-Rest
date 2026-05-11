@@ -1,19 +1,16 @@
 const Event = require('../models/Event');
 
-
+// Criar evento
 const createEvent = async (req, res) => {
   try {
     const event = await Event.create(req.body);
     res.status(201).json({ success: true, event });
   } catch (error) {
-    // Erros de validação do Mongoose serão capturados aqui
-    res.status(400).json({ 
-      message: 'Erro ao criar evento', 
-      error: error.message 
-    });
+    res.status(400).json({ message: 'Erro ao criar evento', error: error.message });
   }
 };
 
+// Listar eventos (com filtros e paginação)
 const getEvents = async (req, res) => {
   try {
     let query = {};
@@ -51,7 +48,7 @@ const getEvents = async (req, res) => {
   }
 };
 
-
+// Buscar evento por ID
 const getEventById = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
@@ -64,7 +61,7 @@ const getEventById = async (req, res) => {
   }
 };
 
-
+// Atualizar evento
 const updateEvent = async (req, res) => {
   try {
     let event = await Event.findById(req.params.id);
@@ -82,6 +79,7 @@ const updateEvent = async (req, res) => {
   }
 };
 
+// Deletar evento
 const deleteEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
@@ -95,10 +93,4 @@ const deleteEvent = async (req, res) => {
   }
 };
 
-module.exports = {
-  createEvent,
-  getEvents,
-  getEventById,
-  updateEvent,
-  deleteEvent
-};
+module.exports = {createEvent, getEvents, getEventById, updateEvent, deleteEvent};

@@ -1,12 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {
-  createEvent,
-  getEvents,
-  getEventById,
-  updateEvent,
-  deleteEvent
-} = require('../controllers/eventController');
+const {createEvent, getEvents, getEventById, updateEvent, deleteEvent} = require('../controllers/eventController');
 
 // Rotas CRUD
 router.post('/', createEvent);
