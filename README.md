@@ -275,8 +275,6 @@ Guarde o ID retornado na criação para usar nas requisições GET, PUT e DELETE
 
 A data deve estar no formato ISO: 2025-02-15T14:00:00Z
 
-Os status disponíveis são: active, cancelled, completed
-
 Estrutura do Projeto
 
 Projeto-Api-Rest/
