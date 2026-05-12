@@ -18,6 +18,9 @@ Instale as dependências
 bash
 npm install
 Configure as variáveis de ambiente
+npm install express
+npm install mongoose
+npm install dotenv
 
 bash
 cp .env.example .env
@@ -25,11 +28,11 @@ Edite o arquivo .env:
 
 text
 PORT=3000
-MONGODB_URI=mongodb://localhost:27017/event-management
+MONGODB_URI=mongodb://localhost:27017/nome-do-servidor
 Inicie o servidor
 
 bash
-npm start
+node app.js
 O servidor estará rodando em: http://localhost:3000
 
 Lista de Endpoints
@@ -52,10 +55,8 @@ title	String	Sim	mínimo 3 caracteres
 description	String	Sim	mínimo 10 caracteres
 date	Date	Sim	deve ser futura
 location	String	Sim	-
-category	String	Sim	Conferência, Workshop, Meetup, Webinar, Palestra, Outro
 capacity	Number	Sim	entre 1 e 10000
 price	Number	Não	padrão 0
-tags	Array	Não	-
 status	String	Não	active, cancelled, completed (padrão: active)
 Como testar com Talend API Tester (extensão do Google Chrome)
 Passo 1: Abrir a extensão
@@ -153,7 +154,7 @@ json
   "success": true,
   "event": {
     "_id": "675a8b3c1234567890abcdef",
-    "title": "Workshop de Node.js",
+    "title": "Evento Teste2",
     ...
   }
 }
@@ -226,9 +227,9 @@ text
 │  Body (JSON)                                │
 │  ┌─────────────────────────────────────┐    │
 │  │ {                                   │    │
-│  │   "title": "Workshop Node.js",      │    │
-│  │   "description": "Aprenda Node.js", │    │
-│  │   "date": "2025-02-15T14:00:00Z",   │    │
+│  │   "title": "Evento Teste2",         │    │
+│  │   "description": "Descrição do ...",│    │
+│  │   "date": "2026-05-20T19:00:00",    │    │
 │  │   "location": "São Paulo",          │    │    
 │  │   "capacity": 50                    │    │
 │  │ }                                   │    │
@@ -250,7 +251,7 @@ bash
 # Criar evento
 curl -X POST http://localhost:3000/api/events \
   -H "Content-Type: application/json" \
-  -d '{"title":"Meu Evento","description":"Descrição","date":"2025-12-31T20:00:00Z","location":"Online","category":"Webinar","capacity":100}'
+  -d '{"title":"Meu Evento","description":"Descrição","date":"2025-12-31T20:00:00Z","location":"Online","capacity":100}'
 
 # Listar eventos
 curl http://localhost:3000/api/events
@@ -266,15 +267,13 @@ curl -X PUT http://localhost:3000/api/events/ID_DO_EVENTO \
 # Deletar evento
 curl -X DELETE http://localhost:3000/api/events/ID_DO_EVENTO
 Observações importantes
-O servidor precisa estar rodando antes de testar (npm start)
+O servidor precisa estar rodando antes de testar node app.js)
 
 O ID do evento é gerado automaticamente pelo MongoDB
 
 Guarde o ID retornado na criação para usar nas requisições GET, PUT e DELETE
 
 A data deve estar no formato ISO: 2025-02-15T14:00:00Z
-
-As categorias disponíveis são: Conferência, Workshop, Meetup, Webinar, Palestra, Outro
 
 Os status disponíveis são: active, cancelled, completed
 
@@ -293,7 +292,7 @@ Projeto-Api-Rest/
 ├── .env         
 ├── .gitignore                
 ├── package.json              
-├── server.js                 
+├── app.js                 
 └── README.md                 
 
 Tecnologias Utilizadas
