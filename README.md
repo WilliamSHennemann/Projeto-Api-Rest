@@ -71,12 +71,12 @@ Body (JSON):
 
 json
 {
-  "title": "Workshop de Node.js",
-  "description": "Aprenda Node.js criando uma API REST",
-  "date": "2025-02-15T14:00:00Z",
-  "location": "São Paulo - SP",
-  "capacity": 50,
-  "price": 49.90,
+  "title": "Evento Teste",
+  "description": "Descrição do evento de teste",
+  "date": "2026-05-20T19:00:00",
+  "location": "São Paulo",
+  "capacity": 10,
+  "price": 50
 }
 Como fazer:
 
@@ -96,14 +96,14 @@ json
 {
   "success": true,
   "event": {
-    "_id": "675a8b3c1234567890abcdef",
-    "title": "Workshop de Node.js",
-    "description": "Aprenda Node.js criando uma API REST",
-    "date": "2025-02-15T14:00:00.000Z",
-    "location": "São Paulo - SP",
-    "capacity": 50,
-    "price": 49.9,
-    "createdAt": "2024-12-12T10:00:00.000Z"
+    "_id":"675a8b3c1234567890abcdef",
+    "title":"Workshop de Node.js",
+    "description":"Aprenda Node.js criando uma API REST",
+    "date":"2025-02-15T14:00:00.000Z",
+    "location":"São Paulo - SP",
+    "capacity":50,
+    "price":49.9,
+    "createdAt":"2024-12-12T10:00:00.000Z"
   }
 }
 2. Listar Eventos (GET)
@@ -118,10 +118,6 @@ Digite a URL acima
 
 Clique em Send
 
-Com filtros:
-
-text
-http://localhost:3000/api/events?category=Workshop&status=active
 Resposta esperada:
 
 json
