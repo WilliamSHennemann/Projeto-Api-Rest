@@ -4,5 +4,17 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "mongoose": "^9.6.1"
+  },
+  "name": "event-management-api",
+  "version": "1.0.0",
+  "description": "API simples de gestão de eventos",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.6.2"
   }
 }
