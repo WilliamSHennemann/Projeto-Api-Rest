@@ -13,8 +13,10 @@
     "jsdoc": "^4.0.5",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^9.6.2",
+    "swagger": "^0.7.5",
     "swagger-autogen": "^2.23.7",
     "swagger-jsdoc": "^6.3.0",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "ui": "^0.2.4"
   }
 }
