@@ -1,304 +1,312 @@
 # API de Gestão de Eventos
 
-## Como rodar o projeto
+API REST para gerenciamento de eventos, usuários e inscrições. O projeto utiliza Node.js, Express, MongoDB, Mongoose, autenticação JWT e documentação interativa com Swagger.
 
-### Pré-requisitos
+## Funcionalidades
+
+- Cadastro e login de usuários
+- Autenticação com JWT
+- Criação, listagem, busca, atualização e remoção de eventos
+- Filtros, busca textual e paginação na listagem de eventos
+- Inscrição e cancelamento de inscrição em eventos
+- Listagem de eventos criados pelo usuário autenticado
+- Listagem de eventos em que o usuário está inscrito
+- Documentação Swagger em `/api-docs`
+
+## Tecnologias
+
+- Node.js
+- Express
+- MongoDB
+- Mongoose
+- JSON Web Token
+- bcryptjs
+- dotenv
+- Swagger UI Express
+
+## Pré-requisitos
+
 - Node.js instalado
-- MongoDB instalado (local ou Atlas)
-- Extensão [Talend API Tester](https://chrome.google.com/webstore/detail/talend-api-tester) no Google Chrome (opcional para testes)
+- MongoDB local ou uma conexão MongoDB Atlas
+- Cliente HTTP para testes, como Talend API Tester, Insomnia, Postman ou `curl`
 
-### Passos para executar
+## Como Rodar
 
-1. **Clone o repositório**
+1. Clone o repositório:
+
 ```bash
 git clone <url-do-repositorio>
-cd event-management-api
-Instale as dependências
+cd "Projeto Api-Rest"
+```
 
-bash
+2. Instale as dependências:
+
+```bash
 npm install
-Configure as variáveis de ambiente
-npm install express
-npm install mongoose
-npm install dotenv
+```
 
-bash
+3. Configure as variáveis de ambiente:
+
+```bash
 cp .env.example .env
-Edite o arquivo .env:
+```
 
-text
+No arquivo `.env`, ajuste os valores conforme seu ambiente:
+
+```env
 PORT=3000
-MONGODB_URI=mongodb://localhost:27017/nome-do-servidor
-Inicie o servidor
+MONGODB_URI=mongodb://localhost:27017/event-management
+JWT_SECRET=sua_chave_secreta
+```
 
-bash
-node app.js
-O servidor estará rodando em: http://localhost:3000
+4. Inicie o servidor:
 
-Lista de Endpoints
-Método	Endpoint	Descrição
-POST	/api/events	Criar um novo evento
-GET	/api/events	Listar todos os eventos
-GET	/api/events/:id	Buscar um evento pelo ID
-PUT	/api/events/:id	Atualizar um evento
-DELETE	/api/events/:id	Deletar um evento
-Parâmetros de consulta (GET /api/events)
-Parâmetro	Tipo	Exemplo	Descrição
-category	string	?category=Workshop	Filtra por categoria
-status	string	?status=active	Filtra por status
-search	string	?search=Node	Busca no título
-page	number	?page=2	Número da página
-limit	number	?limit=10	Itens por página
-Modelo de Dados (Evento)
-Campo	Tipo	Obrigatório	Validação
-title	String	Sim	mínimo 3 caracteres
-description	String	Sim	mínimo 10 caracteres
-date	Date	Sim	deve ser futura
-location	String	Sim	-
-capacity	Number	Sim	entre 1 e 10000
-price	Number	Não	padrão 0
-status	String	Não	active, cancelled, completed (padrão: active)
-Como testar com Talend API Tester (extensão do Google Chrome)
-Passo 1: Abrir a extensão
-Clique no ícone da extensão Talend API Tester no canto superior direito do Chrome
+```bash
+npm start
+```
 
-Passo 2: Configurar as requisições
-1. Criar Evento (POST)
-Campo	Valor
-URL	http://localhost:3000/api/events
-Método	POST
-Headers	Content-Type: application/json
-Body (JSON):
+O servidor ficará disponível em:
 
-json
-{
-  "title": "Evento Teste",
-  "description": "Descrição do evento de teste",
-  "date": "2026-05-20T19:00:00",
-  "location": "São Paulo",
-  "capacity": 10,
-  "price": 50
-}
-Como fazer:
+```text
+http://localhost:3000
+```
 
-Selecione método POST
+A documentação Swagger ficará disponível em:
 
-Digite a URL acima
+```text
+http://localhost:3000/api-docs/
+```
 
-Vá na aba Headers e adicione Content-Type: application/json
+## Autenticação
 
-Vá na aba Body, selecione JSON e cole o JSON acima
+As rotas protegidas exigem um token JWT no header `Authorization`.
 
-Clique em Send
+Exemplo:
 
-Resposta esperada:
+```text
+Authorization: Bearer SEU_TOKEN_JWT
+```
 
-json
-{
-  "success": true,
-  "event": {
-    "_id":"675a8b3c1234567890abcdef",
-    "title":"Workshop de Node.js",
-    "description":"Aprenda Node.js criando uma API REST",
-    "date":"2025-02-15T14:00:00.000Z",
-    "location":"São Paulo - SP",
-    "capacity":50,
-    "price":49.9,
-    "createdAt":"2024-12-12T10:00:00.000Z"
-  }
-}
-2. Listar Eventos (GET)
-Campo	Valor
-URL	http://localhost:3000/api/events
-Método	GET
-Como fazer:
+Para obter o token, faça cadastro ou login pelas rotas `/api/auth/register` ou `/api/auth/login`.
 
-Selecione método GET
+## Endpoints
 
-Digite a URL acima
+### Autenticação
 
-Clique em Send
+| Método | Endpoint | Protegida | Descrição |
+| --- | --- | --- | --- |
+| POST | `/api/auth/register` | Não | Cadastra um novo usuário |
+| POST | `/api/auth/login` | Não | Autentica um usuário |
+| GET | `/api/auth/profile` | Sim | Retorna o perfil do usuário autenticado |
 
-Resposta esperada:
+### Eventos
 
-json
-{
-  "success": true,
-  "count": 2,
-  "total": 2,
-  "pagination": {
-    "page": 1,
-    "limit": 10,
-    "totalPages": 1
-  },
-  "events": [...]
-}
-3. Buscar Evento por ID (GET)
-Campo	Valor
-URL	http://localhost:3000/api/events/ID_DO_EVENTO
-Método	GET
-Como fazer:
+| Método | Endpoint | Protegida | Descrição |
+| --- | --- | --- | --- |
+| GET | `/api/events` | Não | Lista eventos |
+| POST | `/api/events` | Sim | Cria um novo evento |
+| GET | `/api/events/:id` | Não | Busca um evento pelo ID |
+| PUT | `/api/events/:id` | Sim | Atualiza um evento criado pelo usuário autenticado |
+| DELETE | `/api/events/:id` | Sim | Remove um evento criado pelo usuário autenticado |
+| POST | `/api/events/:id/register` | Sim | Inscreve o usuário autenticado em um evento |
+| POST | `/api/events/:id/unregister` | Sim | Cancela a inscrição do usuário autenticado |
+| GET | `/api/events/user/created` | Sim | Lista eventos criados pelo usuário autenticado |
+| GET | `/api/events/user/registered` | Sim | Lista eventos em que o usuário está inscrito |
 
-Copie o _id de um evento retornado na listagem
+### Rotas de teste
 
-Substitua ID_DO_EVENTO pelo ID copiado
+| Método | Endpoint | Descrição |
+| --- | --- | --- |
+| GET | `/api/hello` | Retorna uma mensagem simples |
+| GET | `/api/events/hello` | Retorna uma mensagem simples |
 
-Selecione método GET
+## Parâmetros de Consulta
 
-Clique em Send
+A rota `GET /api/events` aceita os seguintes parâmetros:
 
-Resposta esperada:
+| Parâmetro | Tipo | Exemplo | Descrição |
+| --- | --- | --- | --- |
+| `category` | string | `?category=Workshop` | Filtra por categoria |
+| `status` | string | `?status=active` | Filtra por status |
+| `search` | string | `?search=node` | Busca pelo título do evento |
+| `page` | number | `?page=2` | Define a página da listagem |
+| `limit` | number | `?limit=10` | Define a quantidade de itens por página |
 
-json
-{
-  "success": true,
-  "event": {
-    "_id": "675a8b3c1234567890abcdef",
-    "title": "Evento Teste2",
-    ...
-  }
-}
-4. Atualizar Evento (PUT)
-Campo	Valor
-URL	http://localhost:3000/api/events/ID_DO_EVENTO
-Método	PUT
-Headers	Content-Type: application/json
-Body (JSON):
+Exemplo:
 
-json
-{
-  "capacity": 100,
-  "price": 79.90,
-  "status": "active"
-}
-Como fazer:
+```text
+GET /api/events?category=Workshop&status=active&page=1&limit=10
+```
 
-Selecione método PUT
+## Modelo de Dados
 
-Digite a URL com o ID do evento
+### Usuário
 
-Adicione o Header Content-Type: application/json
+| Campo | Tipo | Obrigatório | Observações |
+| --- | --- | --- | --- |
+| `name` | String | Sim | Nome do usuário |
+| `email` | String | Sim | Deve ser único e válido |
+| `password` | String | Sim | Mínimo de 6 caracteres; armazenado com hash |
+| `phone` | String | Não | Telefone do usuário |
+| `role` | String | Não | `participant`, `organizer` ou `admin`; padrão: `participant` |
+| `registeredEvents` | ObjectId[] | Não | Eventos em que o usuário está inscrito |
+| `createdEvents` | ObjectId[] | Não | Eventos criados pelo usuário |
+| `createdAt` | Date | Não | Data de criação do registro |
 
-Cole o JSON no Body
+### Evento
 
-Clique em Send
+| Campo | Tipo | Obrigatório | Observações |
+| --- | --- | --- | --- |
+| `title` | String | Sim | Entre 3 e 100 caracteres |
+| `description` | String | Sim | Entre 10 e 1000 caracteres |
+| `date` | Date | Sim | Deve ser uma data futura |
+| `location` | String | Sim | Local do evento |
+| `category` | String | Sim | `Conferência`, `Workshop`, `Meetup`, `Webinar`, `Palestra` ou `Outro` |
+| `capacity` | Number | Sim | Entre 1 e 10000 |
+| `price` | Number | Não | Valor mínimo 0; padrão: 0 |
+| `tags` | String[] | Não | Lista de tags |
+| `status` | String | Não | `active`, `cancelled` ou `completed`; padrão: `active` |
+| `createdBy` | ObjectId | Sim | Usuário criador do evento |
+| `attendees` | ObjectId[] | Não | Usuários inscritos |
+| `createdAt` | Date | Não | Data de criação do evento |
 
-Resposta esperada:
+## Exemplos com Curl
 
-json
-{
-  "success": true,
-  "event": {
-    "_id": "675a8b3c1234567890abcdef",
-    "capacity": 100,
-    "price": 79.9,
-    ...
-  }
-}
-5. Deletar Evento (DELETE)
-Campo	Valor
-URL	http://localhost:3000/api/events/ID_DO_EVENTO
-Método	DELETE
-Como fazer:
+### Cadastrar Usuário
 
-Selecione método DELETE
+```bash
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "João Silva",
+    "email": "joao@email.com",
+    "password": "senha123",
+    "phone": "11999999999",
+    "role": "organizer"
+  }'
+```
 
-Digite a URL com o ID do evento
+### Fazer Login
 
-Clique em Send
+```bash
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "joao@email.com",
+    "password": "senha123"
+  }'
+```
 
-Resposta esperada:
+Guarde o valor de `token` retornado para acessar as rotas protegidas.
 
-json
-{
-  "success": true,
-  "message": "Evento deletado com sucesso"
-}
-Exemplo visual no Talend API Tester
-text
-┌─────────────────────────────────────────────┐
-│  POST   http://localhost:3000/api/events    │
-├─────────────────────────────────────────────┤
-│  Headers                                    │
-│  ┌─────────────────────────────────────┐    │
-│  │ Content-Type │ application/json     │    │
-│  └─────────────────────────────────────┘    │
-├─────────────────────────────────────────────┤
-│  Body (JSON)                                │
-│  ┌─────────────────────────────────────┐    │
-│  │ {                                   │    │
-│  │   "title": "Evento Teste2",         │    │
-│  │   "description": "Descrição do ...",│    │
-│  │   "date": "2026-05-20T19:00:00",    │    │
-│  │   "location": "São Paulo",          │    │    
-│  │   "capacity": 50                    │    │
-│  │ }                                   │    │
-│  └─────────────────────────────────────┘    │
-├─────────────────────────────────────────────┤
-│           [ SEND ]                          │
-├─────────────────────────────────────────────┤
-│  RESPOSTA                                   │
-│  ┌─────────────────────────────────────┐    │
-│  │ Status: 201 Created                 │    │
-│  │ {                                   │    │
-│  │   "success": true,                  │    │
-│  │   "event": {...}                    │    │
-│  │ }                                   │    │
-│  └─────────────────────────────────────┘    │
-└─────────────────────────────────────────────┘
-Testes rápidos com curl (terminal)
-bash
-# Criar evento
+### Criar Evento
+
+```bash
 curl -X POST http://localhost:3000/api/events \
   -H "Content-Type: application/json" \
-  -d '{"title":"Meu Evento","description":"Descrição","date":"2025-12-31T20:00:00Z","location":"Online","capacity":100}'
+  -H "Authorization: Bearer SEU_TOKEN_JWT" \
+  -d '{
+    "title": "Workshop de Node.js",
+    "description": "Aprenda a criar uma API REST com Node.js, Express e MongoDB.",
+    "date": "2026-12-31T20:00:00.000Z",
+    "location": "São Paulo - SP",
+    "category": "Workshop",
+    "capacity": 50,
+    "price": 49.9,
+    "tags": ["node", "api", "mongodb"]
+  }'
+```
 
-# Listar eventos
+### Listar Eventos
+
+```bash
 curl http://localhost:3000/api/events
+```
 
-# Buscar evento por ID
+### Buscar Evento por ID
+
+```bash
 curl http://localhost:3000/api/events/ID_DO_EVENTO
+```
 
-# Atualizar evento
+### Atualizar Evento
+
+```bash
 curl -X PUT http://localhost:3000/api/events/ID_DO_EVENTO \
   -H "Content-Type: application/json" \
-  -d '{"capacity":200}'
+  -H "Authorization: Bearer SEU_TOKEN_JWT" \
+  -d '{
+    "capacity": 100,
+    "price": 79.9,
+    "status": "active"
+  }'
+```
 
-# Deletar evento
-curl -X DELETE http://localhost:3000/api/events/ID_DO_EVENTO
-Observações importantes
-O servidor precisa estar rodando antes de testar node app.js)
+### Inscrever-se em um Evento
 
-O ID do evento é gerado automaticamente pelo MongoDB
+```bash
+curl -X POST http://localhost:3000/api/events/ID_DO_EVENTO/register \
+  -H "Authorization: Bearer SEU_TOKEN_JWT"
+```
 
-Guarde o ID retornado na criação para usar nas requisições GET, PUT e DELETE
+### Cancelar Inscrição
 
-A data deve estar no formato ISO: 2025-02-15T14:00:00Z
+```bash
+curl -X POST http://localhost:3000/api/events/ID_DO_EVENTO/unregister \
+  -H "Authorization: Bearer SEU_TOKEN_JWT"
+```
 
-Estrutura do Projeto
+### Deletar Evento
 
-Projeto-Api-Rest/
-├── src/
-│   ├── config/
-│   │   └── db.js     
-│   ├── models/
-│   │   └── Event.js         
-│   ├── controllers/
-│   │   └── EventController.js
-│   └── routes/
-│       └── EventRoutes.js    
-├── .env         
-├── .gitignore                
-├── package.json              
-├── app.js                 
-└── README.md                 
+```bash
+curl -X DELETE http://localhost:3000/api/events/ID_DO_EVENTO \
+  -H "Authorization: Bearer SEU_TOKEN_JWT"
+```
 
-Tecnologias Utilizadas
-Node.js
-Express
-MongoDB
-Mongoose
-Dotenv
+## Testando com Talend API Tester
 
-Autor
+1. Abra a extensão Talend API Tester no Google Chrome.
+2. Informe a URL da rota desejada, por exemplo `http://localhost:3000/api/events`.
+3. Escolha o método HTTP.
+4. Para requisições com JSON, adicione o header `Content-Type: application/json`.
+5. Para rotas protegidas, adicione o header `Authorization: Bearer SEU_TOKEN_JWT`.
+6. Envie a requisição e confira a resposta.
+
+## Estrutura do Projeto
+
+```text
+Projeto Api-Rest/
+|-- src/
+|   |-- config/
+|   |   |-- db.js
+|   |   `-- swagger.js
+|   |-- controllers/
+|   |   |-- AuthController.js
+|   |   `-- EventController.js
+|   |-- middleware/
+|   |   |-- auth.js
+|   |   `-- isEventOwner.js
+|   |-- models/
+|   |   |-- Event.js
+|   |   `-- User.js
+|   `-- routes/
+|       |-- AuthRoutes.js
+|       `-- EventRoutes.js
+|-- .env.example
+|-- package.json
+|-- server.js
+|-- swagger-autogen.js
+`-- README.md
+```
+
+## Observações
+
+- O MongoDB precisa estar acessível antes de iniciar o servidor.
+- As datas de eventos devem estar em formato ISO e precisam ser futuras.
+- O ID de eventos e usuários é gerado automaticamente pelo MongoDB.
+- Apenas o usuário que criou um evento pode atualizá-lo ou removê-lo.
+- A rota `/api-docs/` é a forma mais prática de explorar e testar a API durante o desenvolvimento.
+
+## Autor
+
 William dos Santos Hennemann - WilliamSHennemann

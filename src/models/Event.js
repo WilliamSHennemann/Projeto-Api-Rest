@@ -40,6 +40,26 @@ const eventSchema = new mongoose.Schema({
     default: 0,
     min: [0, 'Preço não pode ser negativo']
   },
+  tags: [{
+    type: String,
+    trim: true
+  }],
+  status: {
+    type: String,
+    enum: ['active', 'cancelled', 'completed'],
+    default: 'active'
+  },
+  // Quem criou o evento
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  // Participantes inscritos no evento
+  attendees: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   createdAt: {
     type: Date,
     default: Date.now
