@@ -43,6 +43,7 @@ const createEvent = async (req, res) => {
   }
 };
 
+// Listar eventos (com filtros e paginação)
 const getEvents = async (req, res) => {
   try {
     let query = {};
@@ -143,6 +144,7 @@ const updateEvent = async (req, res) => {
   }
 };
 
+// Deletar evento
 const deleteEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);

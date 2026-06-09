@@ -29,11 +29,6 @@ const eventSchema = new mongoose.Schema({
     required: [true, 'Localização é obrigatória'],
     trim: true
   },
-  category: {
-    type: String,
-    required: [true, 'Categoria é obrigatória'],
-    enum: ['Conferência', 'Workshop', 'Meetup', 'Webinar', 'Palestra', 'Outro']
-  },
   capacity: {
     type: Number,
     required: [true, 'Capacidade é obrigatória'],
