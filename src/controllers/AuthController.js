@@ -1,143 +1,128 @@
-const User = require('../models/User');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const usuarioModel = require('../models/usuarioModel');
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '7d'
-  });
+const generateToken = (usuario) => {
+  return jwt.sign(
+    {
+      id: usuario.id,
+      usuarioId: usuario.id,
+      email: usuario.email,
+      perfil: usuario.perfil
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+  );
+};
+
+const isValidPassword = async (password, storedPassword) => {
+  if (!storedPassword) return false;
+
+  if (storedPassword.startsWith('$2a$') || storedPassword.startsWith('$2b$')) {
+    return bcrypt.compare(password, storedPassword);
+  }
+
+  return password === storedPassword;
 };
 
 const register = async (req, res) => {
   try {
-    const { name, email, password, phone, role } = req.body;
+    const { nome, name, email, senha, password, perfil } = req.body;
+    const userName = nome || name;
+    const userPassword = senha || password;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ 
-        message: 'Nome, email e senha são obrigatórios' 
-      });
+    if (!userName || !email || !userPassword) {
+      return res.status(400).json({ message: 'Nome, email e senha sao obrigatorios' });
     }
 
-    let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ 
-        message: 'Email já registrado' 
-      });
+    const existingUser = await usuarioModel.findByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email ja cadastrado' });
     }
 
-    // Role padrão é 'participant', apenas 'organizer' se solicitado
-    const userRole = role === 'organizer' ? 'organizer' : 'participant';
-
-    user = await User.create({ 
-      name, 
-      email, 
-      password, 
-      phone,
-      role: userRole
+    const hashedPassword = await bcrypt.hash(userPassword, 10);
+    const usuario = await usuarioModel.create({
+      nome: userName,
+      email,
+      senha: hashedPassword,
+      perfil
     });
 
-    const token = generateToken(user._id);
+    const token = generateToken(usuario);
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role
-      }
+      usuario
     });
   } catch (error) {
-    res.status(400).json({ 
-      message: 'Erro ao registrar',
-      error: error.message 
+    return res.status(500).json({
+      message: 'Erro ao cadastrar usuario',
+      error: error.message
     });
   }
 };
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, senha, password } = req.body;
+    const userPassword = senha || password;
 
-    if (!email || !password) {
-      return res.status(400).json({ 
-        message: 'Email e senha são obrigatórios' 
-      });
+    if (!email || !userPassword) {
+      return res.status(400).json({ message: 'Email e senha sao obrigatorios' });
     }
 
-    const user = await User.findOne({ email })
-      .select('+password')
-      .populate('registeredEvents')
-      .populate('createdEvents');
-    
-    if (!user) {
-      return res.status(401).json({ 
-        message: 'Email ou senha incorretos' 
-      });
+    const usuario = await usuarioModel.findByEmail(email);
+    if (!usuario) {
+      return res.status(401).json({ message: 'Email ou senha incorretos' });
     }
 
-    const isMatch = await user.matchPassword(password);
-    if (!isMatch) {
-      return res.status(401).json({ 
-        message: 'Email ou senha incorretos' 
-      });
+    const passwordMatches = await isValidPassword(userPassword, usuario.senha);
+    if (!passwordMatches) {
+      return res.status(401).json({ message: 'Email ou senha incorretos' });
     }
 
-    const token = generateToken(user._id);
+    const token = generateToken(usuario);
 
-    res.json({
+    return res.json({
       success: true,
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
-        registeredEventsCount: user.registeredEvents.length,
-        createdEventsCount: user.createdEvents.length
+      usuario: {
+        id: usuario.id,
+        nome: usuario.nome,
+        email: usuario.email,
+        perfil: usuario.perfil
       }
     });
   } catch (error) {
-    res.status(500).json({ 
+    return res.status(500).json({
       message: 'Erro ao fazer login',
-      error: error.message 
+      error: error.message
     });
   }
 };
 
-// Obter perfil do usuário autenticado
 const getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.userId)
-      .populate('registeredEvents')
-      .populate('createdEvents');
-
-    if (!user) {
-      return res.status(404).json({ 
-        message: 'Usuário não encontrado' 
-      });
+    const usuario = await usuarioModel.findById(req.userId);
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuario nao encontrado' });
     }
 
-    res.json({
+    return res.json({
       success: true,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
-        registeredEvents: user.registeredEvents,
-        createdEvents: user.createdEvents
-      }
+      usuario
     });
   } catch (error) {
-    res.status(500).json({ 
-      message: 'Erro ao obter perfil',
-      error: error.message 
+    return res.status(500).json({
+      message: 'Erro ao buscar perfil',
+      error: error.message
     });
   }
 };
 
-module.exports = { register, login, getProfile };
+module.exports = {
+  register,
+  login,
+  getProfile
+};

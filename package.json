@@ -1,28 +1,20 @@
 {
-  "dependencies": {
-    "body-parser": "^2.2.2",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "mongoose": "^9.6.1"
-  },
-  "name": "event-management-api",
+  "name": "loja-api",
   "version": "1.0.0",
-  "description": "API simples de gestão de eventos",
-  "main": "app.js",
+  "description": "API REST da loja com MySQL",
+  "main": "server.js",
   "scripts": {
-    "start": "node app.js"
+    "swagger-autogen": "node swagger-autogen.js",
+    "start": "node server.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "jsdoc": "^4.0.5",
     "jsonwebtoken": "^9.0.0",
-    "mongoose": "^9.6.2",
-    "swagger": "^0.7.5",
+    "mysql2": "^3.15.3",
     "swagger-autogen": "^2.23.7",
     "swagger-jsdoc": "^6.3.0",
-    "swagger-ui-express": "^5.0.1",
-    "ui": "^0.2.4"
+    "swagger-ui-express": "^5.0.1"
   }
 }

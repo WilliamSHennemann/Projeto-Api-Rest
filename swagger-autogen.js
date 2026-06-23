@@ -1,19 +1,36 @@
-const swaggerAutogen = require('swagger-autogen')();
-const path = require('path');
+const swaggerAutogen = require('swagger-autogen')({ openapi: '3.0.0' });
 
 const doc = {
   info: {
-    title: 'Minha API Simples',
-    version: '1.0.0',
-    description: 'Exemplo de API básica com Swagger',
+    title: 'API REST da Loja',
+    description: 'API com autenticacao JWT, MySQL e CRUD protegido de categorias',
+    version: process.env.API_VERSION || '2.0.0'
   },
-  host: 'localhost:3000',
-  schemes: ['http']
+  servers: [
+    {
+      url: `http://localhost:${process.env.PORT || 3000}`,
+      description: 'Servidor local'
+    }
+  ],
+  components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT'
+      }
+    }
+  }
 };
 
-const outputFile = path.join(__dirname, 'swagger.json');
-const endpointsFiles = [path.join(__dirname, 'src/routes/EventRoutes.js')];
+const outputFile = './swagger-output.json';
+const endpointsFiles = [
+  './app.js',
+  './src/routes/apiRoutes.js',
+  './src/routes/authRoutes.js',
+  './src/routes/categoriaRoutes.js'
+];
 
-swaggerAutogen.generateApi(outputFile, endpointsFiles, doc).then(() => {
-  require('./server.js');
+swaggerAutogen(outputFile, endpointsFiles, doc).then(() => {
+  console.log('Swagger gerado em swagger-output.json');
 });

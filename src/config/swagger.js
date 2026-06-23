@@ -1,13 +1,21 @@
+const fs = require('fs');
+const path = require('path');
 const swaggerJsdoc = require('swagger-jsdoc');
 
-const getSwaggerSpec = () => {
-  const swaggerOptions = {
+const generatedSwaggerPath = path.resolve(__dirname, '../../swagger-output.json');
+
+let swaggerSpec;
+
+if (fs.existsSync(generatedSwaggerPath)) {
+  swaggerSpec = require(generatedSwaggerPath);
+} else {
+  swaggerSpec = swaggerJsdoc({
     definition: {
       openapi: '3.0.0',
       info: {
-        title: 'API de Gerenciamento de Eventos',
-        version: '1.0.0',
-        description: 'API para gerenciar eventos com autenticação JWT'
+        title: 'API REST da Loja',
+        version: process.env.API_VERSION || '2.0.0',
+        description: 'API com autenticacao JWT e persistencia MySQL'
       },
       servers: [
         {
@@ -20,23 +28,13 @@ const getSwaggerSpec = () => {
           bearerAuth: {
             type: 'http',
             scheme: 'bearer',
-            bearerFormat: 'JWT',
-            description: 'Token JWT para autenticação'
+            bearerFormat: 'JWT'
           }
         }
       }
     },
     apis: ['./src/routes/*.js']
-  };
+  });
+}
 
-  try {
-    const spec = swaggerJsdoc(swaggerOptions);
-    console.log('✓ Swagger spec gerado com sucesso');
-    return spec;
-  } catch (error) {
-    console.error('✗ Erro ao gerar Swagger spec:', error.message);
-    throw error;
-  }
-};
-
-module.exports = getSwaggerSpec();
+module.exports = swaggerSpec;
