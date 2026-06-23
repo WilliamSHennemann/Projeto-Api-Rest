@@ -95,3 +95,11 @@ Com o servidor iniciado, acesse:
 ```text
 http://localhost:3000/api-docs
 ```
+
+Para regenerar a documentacao automaticamente com `swagger-autogen`, rode:
+
+```bash
+npm run swagger-autogen
+```
+
+O comando atualiza o arquivo `swagger-output.json`, usado pelo Swagger UI.
